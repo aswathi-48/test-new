@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .task-card {
+      background-color: #fff;
+      border: 1px solid #dee2e6;
+      border-radius: 10px;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+    }
+    .task-card:hover {
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    }
+    .priority-label {
+      padding: 4px 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      color: #fff;
+      font-weight: 500;
+    }
+    .priority-high { background-color: #dc3545; }
+    .priority-medium { background-color: #ffc107; color: #000; }
+    .priority-low { background-color: #198754; }
+    .completed {
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+    .fade-out {
+      animation: fadeOut 0.4s forwards;
+    }
+    @keyframes fadeOut {
+      from { opacity: 1; transform: scale(1); }
+      to { opacity: 0; transform: scale(0.95); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container my-4">
+    <h2 class="text-center mb-4 fw-bold">Tasks</h2>
+
+    <!-- Search and Filter -->
+    <div class="d-flex justify-content-center mb-4">
+      <input type="text" id="searchInput" class="form-control me-2 w-50" placeholder="Search tasks...">
+      <select id="filterSelect" class="form-select w-25 me-2">
+        <option value="all">All</option>
+        <option value="pending">Pending</option>
+        <option value="completed">Completed</option>
+        <option value="high">High Priority</option>
+      </select>
+      <button id="filterBtn" class="btn btn-primary">Filter</button>
+    </div>
+
+    <!-- Task List -->
+    <div id="taskContainer"></div>
+  </div>
+
+  <script>
+    const tasks = [
+      { title: "Finish project report", desc: "Complete the final report for the project", due: "2024-05", priority: "High", completed: false },
+      { title: "Update website", desc: "Revise the homepage and contact page", due: "2024-04", priority: "Medium", completed: false },
+      { title: "Schedule team meeting", desc: "Set up a meeting for next week", due: "2024-04", priority: "Low", completed: false }
+    ];
+
+    const container = document.getElementById("taskContainer");
+    const searchInput = document.getElementById("searchInput");
+    const filterSelect = document.getElementById("filterSelect");
+
+    function renderTasks(filter = "all", search = "") {
+      container.innerHTML = "";
+      let filtered = tasks.filter(t => {
+        let matchSearch = t.title.toLowerCase().includes(search.toLowerCase()) || 
+                          t.priority.toLowerCase().includes(search.toLowerCase());
+        let matchFilter = 
+          filter === "all" ||
+          (filter === "completed" && t.completed) ||
+          (filter === "pending" && !t.completed) ||
+          (filter === "high" && t.priority === "High");
+        return matchSearch && matchFilter;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<p class="text-center text-muted">No tasks found.</p>`;
+        return;
+      }
+
+      filtered.forEach((task, index) => {
+        const card = document.createElement("div");
+        card.className = "task-card";
+        card.innerHTML = `
+          <div>
+            <h6 class="mb-1 ${task.completed ? 'completed' : ''}">${task.title}</h6>
+            <p class="mb-1 small ${task.completed ? 'completed' : ''}">${task.desc}</p>
+            <small class="text-muted">Due: ${task.due}</small>
+          </div>
+          <div class="text-end">
+            <span class="priority-label priority-${task.priority.toLowerCase()}">${task.priority}</span><br>
+            <button class="btn btn-sm btn-success mt-2 me-2 mark-btn">${task.completed ? 'Undo' : 'Mark Complete'}</button>
+            <button class="btn btn-sm btn-danger delete-btn">Delete</button>
+          </div>
+        `;
+
+        // Button Handlers
+        card.querySelector(".mark-btn").addEventListener("click", () => {
+          task.completed = !task.completed;
+          renderTasks(filter, searchInput.value);
+        });
+
+        card.querySelector(".delete-btn").addEventListener("click", () => {
+          card.classList.add("fade-out");
+          setTimeout(() => {
+            tasks.splice(index, 1);
+            renderTasks(filter, searchInput.value);
+          }, 400);
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById("filterBtn").addEventListener("click", () => {
+      renderTasks(filterSelect.value, searchInput.value);
+    });
+
+    searchInput.addEventListener("input", () => {
+      renderTasks(filterSelect.value, searchInput.value);
+    });
+
+    // Initial render
+    renderTasks();
+  </script>
+</body>
+</html>

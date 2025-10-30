@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile Page</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      background-color: #f7f9fc;
+      color: #333;
+    }
+
+    /* Navbar */
+    nav {
+      background-color: #007bff;
+      color: #fff;
+      padding: 15px 30px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    /* Profile Card */
+    .profile-card {
+      background: #fff;
+      max-width: 400px;
+      margin: 30px auto;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .profile-card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+    }
+
+    .profile-card h2 {
+      margin: 5px 0;
+      color: #222;
+    }
+
+    .profile-card p {
+      margin: 4px 0;
+      color: #555;
+    }
+
+    .edit-btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    .edit-btn:hover {
+      background-color: #0056b3;
+    }
+
+    /* Edit Form */
+    .edit-form {
+      display: none;
+      background: #fff;
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .edit-form input, .edit-form textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .save-btn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .save-btn:hover {
+      background-color: #1e7e34;
+    }
+
+    /* Footer */
+    footer {
+      background: #007bff;
+      color: #fff;
+      text-align: center;
+      padding: 12px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <!-- <nav>My Dashboard</nav> -->
+
+  <h1>Profile</h1>
+
+  <div class="profile-card" id="profileCard">
+    <img id="profileImage" src="https://via.placeholder.com/100" alt="Profile Picture" />
+    <h2 id="profileName">John Doe</h2>
+    <p id="profileEmail">johndoe@example.com</p>
+    <p id="profileTitle">Frontend Developer</p>
+    <p id="profileBio">
+      Passionate frontend developer with 5 years of experience.
+    </p>
+    <button class="edit-btn" onclick="toggleEditForm()">Edit Profile</button>
+  </div>
+
+  <div class="edit-form" id="editForm">
+    <h3>Edit Profile</h3>
+    <input type="text" id="nameInput" placeholder="Full Name" />
+    <input type="email" id="emailInput" placeholder="Email" />
+    <input type="text" id="titleInput" placeholder="Job Title" />
+    <textarea id="bioInput" rows="3" placeholder="Bio"></textarea>
+    <input type="file" id="imageInput" accept="image/*" />
+    <button class="save-btn" onclick="saveProfile()">Save</button>
+  </div>
+
+  <!-- <footer>&copy; 2025 My Dashboard | All Rights Reserved</footer> -->
+
+  <script>
+    let profileData = {
+      name: "John Doe",
+      email: "johndoe@example.com",
+      title: "Frontend Developer",
+      bio: "Passionate frontend developer with 5 years of experience.",
+      image: "https://via.placeholder.com/100",
+    };
+
+    const profileCard = document.getElementById("profileCard");
+    const editForm = document.getElementById("editForm");
+
+    const nameEl = document.getElementById("profileName");
+    const emailEl = document.getElementById("profileEmail");
+    const titleEl = document.getElementById("profileTitle");
+    const bioEl = document.getElementById("profileBio");
+    const imageEl = document.getElementById("profileImage");
+
+    const nameInput = document.getElementById("nameInput");
+    const emailInput = document.getElementById("emailInput");
+    const titleInput = document.getElementById("titleInput");
+    const bioInput = document.getElementById("bioInput");
+    const imageInput = document.getElementById("imageInput");
+
+    function toggleEditForm() {
+      editForm.style.display = editForm.style.display === "block" ? "none" : "block";
+      nameInput.value = profileData.name;
+      emailInput.value = profileData.email;
+      titleInput.value = profileData.title;
+      bioInput.value = profileData.bio;
+    }
+
+    function saveProfile() {
+      profileData.name = nameInput.value;
+      profileData.email = emailInput.value;
+      profileData.title = titleInput.value;
+      profileData.bio = bioInput.value;
+
+      const file = imageInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          profileData.image = e.target.result;
+          updateProfile();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        updateProfile();
+      }
+      editForm.style.display = "none";
+    }
+
+    function updateProfile() {
+      nameEl.textContent = profileData.name;
+      emailEl.textContent = profileData.email;
+      titleEl.textContent = profileData.title;
+      bioEl.textContent = profileData.bio;
+      imageEl.src = profileData.image;
+    }
+  </script>
+</body>
+</html>
